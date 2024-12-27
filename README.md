@@ -120,8 +120,10 @@ const disable = async () => {
 
 <docgen-index>
 
-* [`enable()`](#enable)
-* [`disable()`](#disable)
+* [`enablePrivacyScreen()`](#enableprivacyscreen)
+* [`disablePrivacyScreen()`](#disableprivacyscreen)
+* [`enableScreenshotProtection()`](#enablescreenshotprotection)
+* [`disableScreenshotProtection()`](#disablescreenshotprotection)
 * [`addListener('screenRecordingStarted', ...)`](#addlistenerscreenrecordingstarted)
 * [`addListener('screenRecordingStopped', ...)`](#addlistenerscreenrecordingstopped)
 * [`addListener('screenshotTaken', ...)`](#addlistenerscreenshottaken)
@@ -133,13 +135,14 @@ const disable = async () => {
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
 
-### enable()
+### enablePrivacyScreen()
 
 ```typescript
-enable() => Promise<void>
+enablePrivacyScreen() => Promise<void>
 ```
 
 Enables the privacy screen protection.
+This covers the screen with a customizable privacy view.
 
 Only available for Android and iOS.
 
@@ -148,17 +151,50 @@ Only available for Android and iOS.
 --------------------
 
 
-### disable()
+### disablePrivacyScreen()
 
 ```typescript
-disable() => Promise<void>
+disablePrivacyScreen() => Promise<void>
 ```
 
 Disables the privacy screen protection.
+Removes the privacy view covering the screen.
 
 Only available for Android and iOS.
 
 **Since:** 1.1.0
+
+--------------------
+
+
+### enableScreenshotProtection()
+
+```typescript
+enableScreenshotProtection() => Promise<void>
+```
+
+Enables protection against taking screenshots.
+This will prevent users from taking screenshots or capturing the screen.
+
+Only available on iOS.
+
+**Since:** 3.2.0
+
+--------------------
+
+
+### disableScreenshotProtection()
+
+```typescript
+disableScreenshotProtection() => Promise<void>
+```
+
+Disables protection against taking screenshots.
+Allows users to take screenshots or capture the screen again.
+
+Only available on iOS.
+
+**Since:** 3.2.0
 
 --------------------
 

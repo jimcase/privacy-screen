@@ -57,20 +57,43 @@ declare module '@capacitor/cli' {
 export interface PrivacyScreenPlugin {
   /**
    * Enables the privacy screen protection.
+   * This covers the screen with a customizable privacy view.
    *
    * Only available for Android and iOS.
    *
    * @since 1.1.0
    */
-  enable(): Promise<void>;
+  enablePrivacyScreen(): Promise<void>;
+
   /**
    * Disables the privacy screen protection.
+   * Removes the privacy view covering the screen.
    *
    * Only available for Android and iOS.
    *
    * @since 1.1.0
    */
-  disable(): Promise<void>;
+  disablePrivacyScreen(): Promise<void>;
+
+  /**
+   * Enables protection against taking screenshots.
+   * This will prevent users from taking screenshots or capturing the screen.
+   *
+   * Only available on iOS.
+   *
+   * @since 3.2.0
+   */
+  enableScreenshotProtection(): Promise<void>;
+
+  /**
+   * Disables protection against taking screenshots.
+   * Allows users to take screenshots or capture the screen again.
+   *
+   * Only available on iOS.
+   *
+   * @since 3.2.0
+   */
+  disableScreenshotProtection(): Promise<void>;
   /**
    * Called when the screen recording is started.
    *

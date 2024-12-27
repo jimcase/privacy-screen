@@ -29,14 +29,26 @@ public class PrivacyScreenPlugin: CAPPlugin {
         NotificationCenter.default.removeObserver(self)
     }
 
-    @objc func enable(_ call: CAPPluginCall) {
-        implementation?.enable(completion: {
+    @objc func enablePrivacyScreen(_ call: CAPPluginCall) {
+        implementation?.enablePrivacyScreen(completion: {
             call.resolve()
         })
     }
 
-    @objc func disable(_ call: CAPPluginCall) {
-        implementation?.disable(completion: {
+    @objc func disablePrivacyScreen(_ call: CAPPluginCall) {
+        implementation?.disablePrivacyScreen(completion: {
+            call.resolve()
+        })
+    }
+
+    @objc func enableScreenshotProtection(_ call: CAPPluginCall) {
+        implementation?.enableScreenshotProtection(completion: {
+            call.resolve()
+        })
+    }
+
+    @objc func disableScreenshotProtection(_ call: CAPPluginCall) {
+        implementation?.disableScreenshotProtection(completion: {
             call.resolve()
         })
     }

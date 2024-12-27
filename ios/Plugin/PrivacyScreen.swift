@@ -17,7 +17,7 @@ import UIKit
 
         super.init()
         if config.enable {
-            self.enable(completion: nil)
+            self.enablePrivacyScreen(completion: nil)
         }
 
         self.window = window
@@ -43,16 +43,27 @@ import UIKit
         }
     }
 
-    @objc public func enable(completion: (() -> Void)?) {
-        self.isEnabled = true
+     @objc public func enablePrivacyScreen(completion: (() -> Void)?) {
         DispatchQueue.main.async {
-            self.plugin.bridge?.webView?.disableScreenshots(imageName: self.config.imageName, screenPrevent: self.screenPrevent)
+            self.privacyViewController.modalPresentationStyle = .overFullScreen
+            self.plugin.bridge?.viewController?.present(self.privacyViewController, animated: false, completion: completion)
+        }
+     }
+
+    @objc public func disablePrivacyScreen(completion: (() -> Void)?) {
+        DispatchQueue.main.async {
+            self.privacyViewController.dismiss(animated: false, completion: completion)
+        }
+    }
+
+    @objc public func enableScreenshotProtection(completion: (() -> Void)?) {
+        DispatchQueue.main.async {
+            self.plugin.bridge?.webView?.disableScreenshots(screenPrevent: self.screenPrevent)
             completion?()
         }
     }
 
-    @objc public func disable(completion: (() -> Void)?) {
-        self.isEnabled = false
+    @objc public func disableScreenshotProtection(completion: (() -> Void)?) {
         DispatchQueue.main.async {
             self.plugin.bridge?.webView?.enableScreenshots(screenPrevent: self.screenPrevent)
             completion?()
@@ -128,7 +139,7 @@ public extension WKWebView {
         screenPrevent.isSecureTextEntry = false
     }
 
-    func disableScreenshots(imageName: String?, screenPrevent: UITextField) {
+    func disableScreenshots(screenPrevent: UITextField) {
         screenPrevent.isSecureTextEntry = true
     }
 }
