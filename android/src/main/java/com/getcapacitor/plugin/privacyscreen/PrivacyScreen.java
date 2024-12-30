@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin.privacyscreen;
 
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -14,6 +15,7 @@ public class PrivacyScreen {
 
     private final PrivacyScreenPlugin plugin;
     private final PrivacyScreenConfig config;
+    private View focusMonitorView;
     private View privacyOverlay;
     private static final String TAG = "PrivacyScreen";
 
@@ -31,48 +33,33 @@ public class PrivacyScreen {
             enableScreenshotProtection(() -> Log.d(TAG, "Screenshot protection has been enabled."));
         }
 
+        plugin.getActivity().runOnUiThread(() -> {
+            FrameLayout root = plugin.getActivity().findViewById(android.R.id.content);
+            focusMonitorView = new View(plugin.getContext());
+            focusMonitorView.setLayoutParams(new FrameLayout.LayoutParams(1, 1));
+            focusMonitorView.setBackgroundColor(Color.TRANSPARENT);
+
+            focusMonitorView.getViewTreeObserver().addOnWindowFocusChangeListener(hasFocus -> {
+                if (!hasFocus) {
+                    addPrivacyOverlay();
+                    Log.d(TAG, "Window has lost focus, adding privacy overlay.");
+                } else {
+                    removePrivacyOverlay();
+                    Log.d(TAG, "Window has gained focus, removing privacy overlay.");
+                }
+            });
+
+            root.addView(focusMonitorView);
+            focusMonitorView.requestFocus();
+        });
+
         // Register lifecycle callbacks
         plugin.getActivity().getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-            @Override
-            public void onActivityPrePaused(Activity activity) {
-                if (activity == plugin.getActivity()) {
-                    addPrivacyOverlay();
-
-                    Log.d(TAG, "Activity is about to be paused, adding overlay.");
-                }
-            }
-            @Override
-            public void onActivityPaused(Activity activity) {
-                Log.d(TAG, "onActivityPaused");
-                if (config.isPrivacyScreenEnabled() &&  activity == plugin.getActivity()) {
-                    //addPrivacyOverlay();  // Add overlay when the app goes to background
-                    Log.d(TAG, "Privacy overlay added due to activity pause.");
-                }
-            }
-
-            @Override
-            public void onActivityResumed(Activity activity) {
-            Log.d(TAG, "onActivityResumed");
-                if (config.isPrivacyScreenEnabled() && activity == plugin.getActivity()) {
-                    //removePrivacyOverlay();  // Remove overlay when the app resumes
-                    Log.d(TAG, "Privacy overlay removed on activity resume.");
-                }
-            }
-
-            @Override
-            public void onActivityPreResumed(Activity activity) {
-                if (activity == plugin.getActivity()) {
-                    Log.d(TAG, "Activity is about to resume, removing overlays.");
-                    // Here you might want to ensure any sensitive overlays are removed
-                    // just before the activity becomes active and visible.
-                    removePrivacyOverlay();
-                }
-            }
 
             @Override
             public void onActivityStarted(Activity activity) {
                 if (activity == plugin.getActivity()) {
-                    //removePrivacyOverlay();
+                    removePrivacyOverlay();
                     Log.d(TAG, "Activity started, removing overlay if present.");
                 }
             }
@@ -80,12 +67,14 @@ public class PrivacyScreen {
             @Override
             public void onActivityStopped(Activity activity) {
                 if (activity == plugin.getActivity()) {
-                    //addPrivacyOverlay();
+                    addPrivacyOverlay();
                     Log.d(TAG, "Activity stopped, adding overlay.");
                 }
             }
             @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
             @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+            @Override public void onActivityResumed(Activity activity) {}
+            @Override public void onActivityPaused(Activity activity) {}
             @Override public void onActivityDestroyed(Activity activity) {
                 if (activity == plugin.getActivity()) {
                     plugin.getActivity().getApplication().unregisterActivityLifecycleCallbacks(this);
@@ -93,6 +82,7 @@ public class PrivacyScreen {
             }
         });
     }
+
 
     public void enablePrivacyScreen(Runnable callback) {
         if (!isPrivacyOverlayEnabled) {
