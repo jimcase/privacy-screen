@@ -59,7 +59,7 @@ public class PrivacyScreen {
             @Override
             public void onActivityStarted(Activity activity) {
                 if (activity == plugin.getActivity()) {
-                    removePrivacyOverlay();
+                    addScreenshotProtectionFlags();
                     Log.d(TAG, "Activity started, removing overlay if present.");
                 }
             }
@@ -71,7 +71,8 @@ public class PrivacyScreen {
                     Log.d(TAG, "Activity stopped, adding overlay.");
                 }
             }
-            @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+            @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            }
             @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
             @Override public void onActivityResumed(Activity activity) {}
             @Override public void onActivityPaused(Activity activity) {}
@@ -138,7 +139,7 @@ public class PrivacyScreen {
         if (privacyOverlay == null) {
             privacyOverlay = new View(plugin.getContext());
             privacyOverlay.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-            privacyOverlay.setBackgroundColor(0xFFADD8FF);
+            privacyOverlay.setBackgroundColor(0xFFFFFFFF);
             Log.d(TAG, "Creating new privacy overlay.");
         } else {
             // If privacyOverlay already has a parent, remove it from that parent first
@@ -169,8 +170,12 @@ public class PrivacyScreen {
     }
 
     private void addScreenshotProtectionFlags() {
-        Window window = plugin.getActivity().getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+
+        plugin
+            .getActivity()
+            .getWindow()
+            .setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+
         isScreenshotProtectionEnabled = true;
         Log.d(TAG, "FLAG_SECURE added to window.");
     }
